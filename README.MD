@@ -3,13 +3,157 @@
 > 🌟 Attribute 기반 의존성 자동 등록 라이브러리
 
 ---
+## Nuget
+> 
+
+---
+## 💡 구현 동기 
+
+ASP.NET Core의 기본 DI 컨테이너는 매우 간단하고 강력하지만,  
+서비스 등록을 위해 매번 `builder.Services.AddXXX<>()`를 반복하는 것은 다음과 같은 불편을 초래했습니다:
+
+- **서비스 구현체가 많아질수록 등록 코드가 길어지고 관리가 어려움**
+- **다중 구현체(예: 인터페이스 A를 구현한 클래스가 여러 개) 상황에서 명확한 주입 지정이 번거로움**
+- **클래스 선언과 등록 코드가 서로 분리되어 있어, 의도가 코드에 드러나지 않음**
+
+> 이러한 문제점에 대한 해결책으로 Attribute를 떠올렸습니다.
+
+그래서 `AttributeAutoDI`는 다음 철학을 바탕으로 만들어졌습니다:
+
+- ✅ **서비스는 자기 자신이 어떻게 사용될지 선언할 수 있어야 한다**
+- ✅ **구현체가 여러 개여도 Primary/Naming으로 명확하게 구분될 수 있어야 한다**
+- ✅ **불필요한 등록 코드 없이도 명확한 DI 구성을 제공해야 한다**
+
+> 이 라이브러리는 생산성과 명시성을 모두 추구합니다. 
+> 안전하면서도 덜 귀찮은 개발환경을 구축하고.
+> "내가 등록했나?" 보다 "등록이 잘 되어 있겠지"라고 믿을 수 있게.
+
+---
+
+## 🧾 요구사항
+
+- .NET 6.0 이상
+- Microsoft.Extensions.DependencyInjection 사용 기반 프레임워크 (ASP.NET Core, Console 등)
+
+---
 
 ## 🔥 주요 기능
 
-- ✅ `[Singleton]`, `[Scoped]`, `[Transient]` 클래스로 자동 등록
+- ✅ `[Singleton]`, `[Scoped]`, `[Transient]` 클래스 의존성 자동 등록
 - ⭐ `[Primary]` 지정 시 다중 구현체 중 기본값 자동 지정
 - 🏷️ `[Named]` 지정 후 파라미터에 `[Named("...")]`로 명시적 주입
-- 🧩 Controller 주입까지 자동 지원
-- 🧪 xUnit 기반 테스트 완비
+---
+
+## 🚀 사용 방법
+
+### 1. Extension 등록
+```jsx
+builder.Services.AddAttributeDependencyInjection();
+```
+AddAttributeDependencyInjection() Extension은 내부적으로 다음과 같이 구현되어 있습니다
+```jsx
+public static void AddAttributeDependencyInjection(
+        this IServiceCollection services,
+        Assembly? assembly = null
+    )
+    {
+        assembly ??= Assembly.GetEntryAssembly() ?? typeof(Program).Assembly;
+
+        services.AddControllersWithViews();
+        services.AddControllers();
+        services.UseAttributeInjection(assembly);
+        services.UsePrimaryInjection();
+        services.UseNameParameterInjection(assembly);
+        services.Replace(ServiceDescriptor.Transient<IControllerActivator, NamedControllerActivator>());
+    }
+```
+따라서 AddController , AddControllersWithViews 를 재등록 하지 않으셔야 합니다.
+
+### 2. 클래스 의존성 자동 주입 
+[Singleton], [Transient], [Scoped] 를 통해서 클래스 의존성을 자동으로 등록합니다.
+```jsx
+[Singleton]
+public class MyService : IMyService
+{
+    public string Get() => "hello";
+}
+```
+이것은 다음과 같습니다
+```jsx
+builder.Services.AddSingleton<IMyService, MyService>();
+```
+
+### 3. 다중 구현체 중 기본값 지정 (Primary)
+다중 구현체가 있을 때 [Primary]를 통해서 기본 주입 구현체를 지정할 수 있습니다.
+```jsx
+
+[Singleton]
+public class MyService : IMyService
+{
+    public string Get() => "hello";
+}
+
+[Primary]
+[Singleton]
+public class MyPrimaryService : IMyService
+{
+    public string Get() => "I am primary";
+}
+```
+이것은 IMyService가 주입될 때 MyPrimaryService가 주입되는것을 보장합니다.
+```jsx
+[Singleton]
+public class TestFacade(IMyservice myservice)
+{
+    ...
+}
+// myservice == MyPrimaryService
+```
+
+### 4. 명시적 주입 기능 (Named)
+[Named]를 통해서 주입 구현체중 이름과 매핑되는 구현체를 지정할 수 있습니다
+```jsx
+[Singleton]
+public class MyService : IMyService
+{
+    public string Get() => "hello";
+}
+```
+--> 기본적으로 LowerCamelCase로 이름이 등록됩니다. (MyService -> myService)
+```jsx
+[Singleton("myNamedService")]
+public class MyService : IMyService
+{
+    public string Get() => "hello";
+}
+```
+--> name 프로퍼티를 통해서 이름을 지정할 수 있습니다
+```jsx
+[Singleton]
+public class TestFacade([Named("myNamedService")]IMyservice myservice)
+{
+...
+}
+// myservice == MyService
+```
+--> 파라미터에 [Named]를 통해서 이름과 매핑되는 구현체를 주입받을 수 있습니다
+(단 해당 클래스가 [Singleton], [Transient], [Scoped]를 가지고 있거나 , ControllerBase , Controller 를 상속한 경우에만 작동합니다)
 
 ---
+
+## 🧪 테스트 및 예제
+모든 기능은 xUnit 테스트로 검증되었습니다.
+또한 예제는 AttributeAutoDi.Sample 프로젝트를 통해서 확인해볼 수 있습니다.
+
+---
+
+## 🙌 기여하기
+취약점이나 개선점을 발견하면 이슈 등록 또는 PR 부탁드립니다.
+
+---
+
+## 📄 라이선스
+MIT License
+Copyright (c) 2025
+
+
