@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttributeAutoDI", "AttributeAutoDI\AttributeAutoDI.csproj", "{174F2B4D-A6B4-4D4D-A94B-8A61522E9F69}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttributeAutoDI.Test", "AttributeAutoDI.Test\AttributeAutoDI.Test.csproj", "{3A458F1C-F5DC-43B5-A85D-601387B91204}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AttributeAutoDI.Sample", "AttributeAutoDI.Sample\AttributeAutoDI.Sample.csproj", "{458B4A71-C56F-4892-9D73-926353FC3CB0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{174F2B4D-A6B4-4D4D-A94B-8A61522E9F69}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{174F2B4D-A6B4-4D4D-A94B-8A61522E9F69}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{174F2B4D-A6B4-4D4D-A94B-8A61522E9F69}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{174F2B4D-A6B4-4D4D-A94B-8A61522E9F69}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3A458F1C-F5DC-43B5-A85D-601387B91204}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A458F1C-F5DC-43B5-A85D-601387B91204}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A458F1C-F5DC-43B5-A85D-601387B91204}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A458F1C-F5DC-43B5-A85D-601387B91204}.Release|Any CPU.Build.0 = Release|Any CPU
+		{458B4A71-C56F-4892-9D73-926353FC3CB0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{458B4A71-C56F-4892-9D73-926353FC3CB0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{458B4A71-C56F-4892-9D73-926353FC3CB0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{458B4A71-C56F-4892-9D73-926353FC3CB0}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
