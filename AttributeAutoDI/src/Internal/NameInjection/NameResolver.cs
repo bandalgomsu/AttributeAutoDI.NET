@@ -10,16 +10,16 @@ public static class NameResolver
         return lifetime switch
         {
             ServiceLifetime.Singleton => implType.GetCustomAttribute<SingletonAttribute>()?.Name ??
-                                         ToCamelCase(implType.Name),
+                                         ToLowerCamelCase(implType.Name),
             ServiceLifetime.Scoped => implType.GetCustomAttribute<ScopedAttribute>()?.Name ??
-                                      ToCamelCase(implType.Name),
+                                      ToLowerCamelCase(implType.Name),
             ServiceLifetime.Transient => implType.GetCustomAttribute<TransientAttribute>()?.Name ??
-                                         ToCamelCase(implType.Name),
-            _ => ToCamelCase(implType.Name)
+                                         ToLowerCamelCase(implType.Name),
+            _ => ToLowerCamelCase(implType.Name)
         };
     }
 
-    private static string ToCamelCase(string name)
+    private static string ToLowerCamelCase(string name)
     {
         return char.ToLowerInvariant(name[0]) + name.Substring(1);
     }
