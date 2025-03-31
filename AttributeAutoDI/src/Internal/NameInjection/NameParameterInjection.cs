@@ -1,6 +1,5 @@
 using System.Reflection;
 using AttributeAutoDI.Attribute;
-using Microsoft.AspNetCore.Mvc;
 
 namespace AttributeAutoDI.Internal.NameInjection;
 
@@ -15,15 +14,11 @@ public static class NameParameterInjection
 
         foreach (var type in candidates)
         {
-            var lifetime = LifetimeUtil.GetLifetimeFromAttributes(type);
+            var descriptor = services.FirstOrDefault(sd => sd.ServiceType == type);
 
-            var isController = typeof(ControllerBase).IsAssignableFrom(type);
+            var lifetime = descriptor?.Lifetime;
 
-            if (lifetime == null && isController)
-            {
-                lifetime = ServiceLifetime.Transient;
-                Console.WriteLine($"[AttributeAutoDI ⚙️] Controller {type.Name} auto-registered as Transient");
-            }
+            lifetime ??= LifetimeUtil.GetLifetimeFromAttributes(type);
 
             switch (lifetime)
             {
@@ -36,6 +31,10 @@ public static class NameParameterInjection
                 case ServiceLifetime.Transient:
                     services.AddTransient(type, sp => NamedActivator.CreateInstance(sp, type));
                     break;
+                default:
+                    throw new InvalidOperationException(
+                        $"[AttributeAutoDI ❌] Cannot determine lifetime for '{type.FullName}'. " +
+                        $"Make sure it's either registered already or decorated with [Singleton]/[Scoped]/[Transient].");
             }
 
             Console.WriteLine($"[AttributeAutoDI ✅] NamedConsumer registered: {type.Name} as {lifetime}");
