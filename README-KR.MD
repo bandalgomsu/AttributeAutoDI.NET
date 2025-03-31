@@ -43,6 +43,7 @@ ASP.NET Core의 기본 DI 컨테이너는 매우 간단하고 강력하지만,
 - ✅ `[Singleton]`, `[Scoped]`, `[Transient]` 클래스 의존성 자동 등록
 - ⭐ `[Primary]` 지정 시 다중 구현체 중 기본값 자동 지정
 - 🏷️ `[Named]` 지정 후 파라미터에 `[Named("...")]`로 명시적 주입
+- 🛠️ `[Options()]` 지정 시 IOptions 자동 바인딩 ! 
 ---
 
 ## 🚀 사용 방법
