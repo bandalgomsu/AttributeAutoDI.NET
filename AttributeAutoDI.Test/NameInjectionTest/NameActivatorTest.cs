@@ -97,6 +97,7 @@ public class Dog : IAnimal
     }
 }
 
+[Singleton]
 public class PetOwner([Named("cat")] IAnimal animal)
 {
     public IAnimal Pet => animal;
