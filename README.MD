@@ -28,6 +28,7 @@ ASP.NET Core의 기본 DI 컨테이너는 매우 간단하고 강력하지만,
 > 안전하면서도 덜 귀찮은 개발환경을 구축하고.
 > "내가 등록했나?" 보다 "등록이 잘 되어 있겠지"라고 믿을 수 있게.
 
+> 최종적으로는 Program.cs , Startup.cs 의 책임을 줄여서 최대한 간소화 하는것이 목표입니다.
 ---
 
 ## 🧾 요구사항
@@ -52,25 +53,30 @@ builder.Services.AddAttributeDependencyInjection();
 ```
 AddAttributeDependencyInjection() Extension은 내부적으로 다음과 같이 구현되어 있습니다
 ```jsx
-public static void AddAttributeDependencyInjection(
-        this IServiceCollection services,
-        Assembly? assembly = null
-    )
-    {
-        assembly ??= Assembly.GetEntryAssembly() ?? typeof(Program).Assembly;
-        
-        services.UseAttributeInjection(assembly);
-        services.UsePrimaryInjection();
-        services.UseNameParameterInjection(assembly);
-        services.Replace(ServiceDescriptor.Transient<IControllerActivator, NamedControllerActivator>());
-    }
+public static class AttributeInjectionExtension
+{
+    public static void AddAttributeDependencyInjection(
+    this IServiceCollection services,
+    IConfiguration configuration,
+    Assembly? assembly = null
+)
+{
+    assembly ??= Assembly.GetEntryAssembly() ?? typeof(Program).Assembly;
+
+    services.UseOptionsBindingInjection(configuration, assembly);
+    services.UseAttributeInjection(assembly);
+    services.UsePrimaryInjection();
+    services.UseNameParameterInjection(assembly);
+    services.Replace(ServiceDescriptor.Transient<IControllerActivator, NamedControllerActivator>());
+}
+}
 ```
-주의
+### 주의 
 ```jsx
 builder.Service.AddSingleton...
 builder.Service.AddAttributeDependencyInjection 
 ```
-위의 코드는 의도한대로 작동합니다 하지만
+- 위의 코드는 의도한대로 작동합니다 하지만
 ```jsx
 builder.Service.AddAttributeDependencyInjection
 builder.Service.AddSingleton...
@@ -146,6 +152,24 @@ public class TestFacade([Named("myNamedService")]IMyservice myservice)
 // myservice == MyService
 ```
 --> 파라미터에 [Named]를 통해서 이름과 매핑되는 구현체를 주입받을 수 있습니다
+
+### 5. 옵션 바인딩 기능 (Options)
+```jsx
+[Options("Sample:Sample")]
+public class SampleOption
+{
+    public string Sample { get; set; } = "";
+}
+```
+이 코드는 다음과 일치합니다.
+```jsx
+builder.Services.Configure<SampleOption>(configuration.GetSection("Sample:Sample"));
+```
+따라서 아래와 같이 주입받아서 사용할 수 있습니다.
+```jsx
+public class SampleController(
+    IOptions<SampleOption> sampleOption) ...
+```
 
 ---
 
