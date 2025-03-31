@@ -11,13 +11,12 @@ public static class AttributeInjectionExtension
 {
     public static void AddAttributeDependencyInjection(
         this IServiceCollection services,
+        IConfiguration configuration,
         Assembly? assembly = null
     )
     {
         assembly ??= Assembly.GetEntryAssembly() ?? typeof(Program).Assembly;
 
-        services.AddControllersWithViews();
-        services.AddControllers();
         services.UseAttributeInjection(assembly);
         services.UsePrimaryInjection();
         services.UseNameParameterInjection(assembly);
