@@ -58,16 +58,25 @@ public static void AddAttributeDependencyInjection(
     )
     {
         assembly ??= Assembly.GetEntryAssembly() ?? typeof(Program).Assembly;
-
-        services.AddControllersWithViews();
-        services.AddControllers();
+        
         services.UseAttributeInjection(assembly);
         services.UsePrimaryInjection();
         services.UseNameParameterInjection(assembly);
         services.Replace(ServiceDescriptor.Transient<IControllerActivator, NamedControllerActivator>());
     }
 ```
-따라서 AddController , AddControllersWithViews 를 재등록 하지 않으셔야 합니다.
+주의
+```jsx
+builder.Service.AddSingleton...
+builder.Service.AddAttributeDependencyInjection 
+```
+위의 코드는 의도한대로 작동합니다 하지만
+```jsx
+builder.Service.AddAttributeDependencyInjection
+builder.Service.AddSingleton...
+```
+이 코드는 의도한대로 동작하지 않을 가능성이 있습니다.
+따라서 AttributeAutoDI가 제공하는 등록방법을 사용하거나, 순서를 유의해주세요.
 
 ### 2. 클래스 의존성 자동 주입 
 [Singleton], [Transient], [Scoped] 를 통해서 클래스 의존성을 자동으로 등록합니다.
@@ -137,13 +146,11 @@ public class TestFacade([Named("myNamedService")]IMyservice myservice)
 // myservice == MyService
 ```
 --> 파라미터에 [Named]를 통해서 이름과 매핑되는 구현체를 주입받을 수 있습니다
-(단 해당 클래스가 [Singleton], [Transient], [Scoped]를 가지고 있거나 , ControllerBase , Controller 를 상속한 경우에만 작동합니다)
 
 ---
 
-## 🧪 테스트 및 예제
-모든 기능은 xUnit 테스트로 검증되었습니다.
-또한 예제는 AttributeAutoDi.Sample 프로젝트를 통해서 확인해볼 수 있습니다.
+## 🧪 예제
+예제는 AttributeAutoDi.Sample 프로젝트를 통해서 확인해볼 수 있습니다.
 
 ---
 
