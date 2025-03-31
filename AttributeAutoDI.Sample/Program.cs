@@ -2,7 +2,11 @@ using AttributeAutoDI.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddAttributeDependencyInjection();
+var configuration = builder.Configuration;
+
+builder.Services.AddControllers();
+builder.Services.AddControllersWithViews();
+builder.Services.AddAttributeDependencyInjection(configuration);
 
 var app = builder.Build();
 

@@ -1,5 +1,4 @@
 using AttributeAutoDI.Attribute;
-using AttributeAutoDI.Internal;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +23,7 @@ public class IntegrationTest
                     .ConfigureServices(services =>
                     {
                         services.AddControllers();
-                        services.AddAttributeDependencyInjection(typeof(IntegrationTest).Assembly);
+                        // services.AddAttributeDependencyInjection(typeof(IntegrationTest).Assembly);
                     })
                     .Configure(app =>
                     {

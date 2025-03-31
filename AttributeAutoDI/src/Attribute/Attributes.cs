@@ -29,6 +29,12 @@ public class NamedAttribute(string name) : System.Attribute
     public string Name { get; } = name;
 }
 
+[AttributeUsage(AttributeTargets.Class)]
+public class OptionsAttribute(string section) : System.Attribute
+{
+    public string Section { get; } = section;
+}
+
 // //todo
 // [AttributeUsage(AttributeTargets.Method)]
 // public class ProfileAttribute(string env) : System.Attribute

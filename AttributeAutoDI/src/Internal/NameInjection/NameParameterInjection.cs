@@ -1,5 +1,6 @@
 using System.Reflection;
 using AttributeAutoDI.Attribute;
+using Microsoft.AspNetCore.Mvc;
 
 namespace AttributeAutoDI.Internal.NameInjection;
 
@@ -14,11 +15,18 @@ public static class NameParameterInjection
 
         foreach (var type in candidates)
         {
-            var descriptor = services.FirstOrDefault(sd => sd.ServiceType == type);
+            var descriptor = services.FirstOrDefault(sd => sd.ServiceType == type || sd.ImplementationType == type);
 
             var lifetime = descriptor?.Lifetime;
 
             lifetime ??= LifetimeUtil.GetLifetimeFromAttributes(type);
+
+            var isController = typeof(ControllerBase).IsAssignableFrom(type);
+            if (lifetime == null && isController)
+            {
+                lifetime = ServiceLifetime.Transient;
+                Console.WriteLine($"[AttributeAutoDI ⚙️] Controller {type.Name} auto-registered as Transient");
+            }
 
             switch (lifetime)
             {
