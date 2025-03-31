@@ -1,3 +1,5 @@
+[README-KR](https://github.com/bandalgomsu/AttributeAutoDI.NET/blob/main/README-KR.MD)
+
 # AttributeAutoDI
 
 > 🌟 Attribute-based automatic dependency injection library for .NET
