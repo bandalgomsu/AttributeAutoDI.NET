@@ -1,5 +1,6 @@
 using AttributeAutoDI.Attribute;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 
 namespace AttributeAutoDI.Sample;
 
@@ -7,7 +8,8 @@ public class SampleController(
     ISingletonService primarySingletonService,
     [Named("NamedDI")] ISingletonService namedSingletonService,
     IScopedService scopedService,
-    TransientService transientService)
+    TransientService transientService,
+    IOptions<SampleOption> sampleOption)
     : ControllerBase
 {
     [HttpGet("/singleton/primary")]
@@ -35,6 +37,13 @@ public class SampleController(
     public ActionResult<string> Transient()
     {
         var response = transientService.GetMessage();
+        return Ok(response);
+    }
+
+    [HttpGet("/option-binding")]
+    public ActionResult<string> OptionBinding()
+    {
+        var response = sampleOption.Value.Sample;
         return Ok(response);
     }
 }
