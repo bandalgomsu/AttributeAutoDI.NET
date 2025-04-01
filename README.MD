@@ -57,7 +57,11 @@ so you can trust the system to "just work."
 
 ### 1. Register the extension
 ```jsx
-builder.Services.AddAttributeDependencyInjection();
+builder.Services.AddAttributeDependencyInjection(builder.Configuration);
+```
+or
+```jsx
+builder.Services.AddAttributeDependencyInjection(builder.Configuration,typeof(Program).Assembly);
 ```
 Internally, it expands to:
 
@@ -70,7 +74,7 @@ public static class AttributeInjectionExtension
     Assembly? assembly = null
 )
 {
-    assembly ??= Assembly.GetEntryAssembly() ?? typeof(Program).Assembly;
+    assembly ??= Assembly.GetEntryAssembly();
 
     services.UseOptionsBindingInjection(configuration, assembly);
     services.UseAttributeInjection(assembly);
@@ -92,8 +96,8 @@ builder.Service.AddSingleton...
 ```
 If you use both manual and attribute-based registration, always call AddAttributeDependencyInjection() after manual registrations.
 
-### 2. Attribute-based Auto registration
-[Singleton], [Transient], [Scoped] 를 통해서 클래스 의존성을 자동으로 등록합니다.
+### 2. Attribute-based Auto registration - [Singleton], [Transient], [Scoped]
+
 ```jsx
 [Singleton]
 public class MyService : IMyService
@@ -106,7 +110,7 @@ This is equivalent to:
 builder.Services.AddSingleton<IMyService, MyService>();
 ```
 
-### 3. Primary service selection
+### 3. Primary service selection - [Primary]
 ```jsx
 
 [Singleton]
@@ -124,7 +128,7 @@ public class MyPrimaryService : IMyService
 ```
 When injecting IMyService, the system will prefer MyPrimaryService.
 
-### 4. Named injection
+### 4. Named injection - [Named]
 
 ```jsx
 [Singleton]
@@ -153,9 +157,9 @@ public class TestFacade([Named("myNamedService")]IMyservice myservice)
 }
 // myservice == MyService
 ```
-Named injection works in any class decorated with [Singleton], [Scoped], or [Transient], and also in ASP.NET Controller or ControllerBase classes.
+Named injection works in registered Class
 
-### 5. Options binding via attribute
+### 5. Options binding via attribute - [Options]
 ```jsx
 [Options("Sample:Sample")]
 public class SampleOption

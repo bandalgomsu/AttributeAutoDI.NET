@@ -50,8 +50,13 @@ ASP.NET Core의 기본 DI 컨테이너는 매우 간단하고 강력하지만,
 
 ### 1. Extension 등록
 ```jsx
-builder.Services.AddAttributeDependencyInjection();
+builder.Services.AddAttributeDependencyInjection(builder.Configuration);
 ```
+or
+```jsx
+builder.Services.AddAttributeDependencyInjection(builder.Configuration,typeof(Program).Assembly);
+```
+
 AddAttributeDependencyInjection() Extension은 내부적으로 다음과 같이 구현되어 있습니다
 ```jsx
 public static class AttributeInjectionExtension
@@ -62,7 +67,7 @@ public static class AttributeInjectionExtension
     Assembly? assembly = null
 )
 {
-    assembly ??= Assembly.GetEntryAssembly() ?? typeof(Program).Assembly;
+    assembly ??= Assembly.GetEntryAssembly();
 
     services.UseOptionsBindingInjection(configuration, assembly);
     services.UseAttributeInjection(assembly);
@@ -85,8 +90,7 @@ builder.Service.AddSingleton...
 이 코드는 의도한대로 동작하지 않을 가능성이 있습니다.
 따라서 AttributeAutoDI가 제공하는 등록방법을 사용하거나, 순서를 유의해주세요.
 
-### 2. 클래스 의존성 자동 주입 
-[Singleton], [Transient], [Scoped] 를 통해서 클래스 의존성을 자동으로 등록합니다.
+### 2. 클래스 의존성 자동 주입 - [Singleton], [Transient], [Scoped]
 ```jsx
 [Singleton]
 public class MyService : IMyService
@@ -99,8 +103,7 @@ public class MyService : IMyService
 builder.Services.AddSingleton<IMyService, MyService>();
 ```
 
-### 3. 다중 구현체 중 기본값 지정 (Primary)
-다중 구현체가 있을 때 [Primary]를 통해서 기본 주입 구현체를 지정할 수 있습니다.
+### 3. 다중 구현체 중 기본값 지정 - [Primary]
 ```jsx
 
 [Singleton]
@@ -126,7 +129,7 @@ public class TestFacade(IMyservice myservice)
 // myservice == MyPrimaryService
 ```
 
-### 4. 명시적 주입 기능 (Named)
+### 4. 명시적 주입 기능 - [Named]
 [Named]를 통해서 주입 구현체중 이름과 매핑되는 구현체를 지정할 수 있습니다
 ```jsx
 [Singleton]
@@ -152,9 +155,9 @@ public class TestFacade([Named("myNamedService")]IMyservice myservice)
 }
 // myservice == MyService
 ```
---> 파라미터에 [Named]를 통해서 이름과 매핑되는 구현체를 주입받을 수 있습니다
+--> 파라미터에 [Named]를 통해서 이름과 매핑되는 구현체를 주입받을 수 있습니다 (NamedParameter 실행 시점에 등록된 클래스만 작동합니다)
 
-### 5. 옵션 바인딩 기능 (Options)
+### 5. 옵션 바인딩 기능 - [Options]
 ```jsx
 [Options("Sample:Sample")]
 public class SampleOption
