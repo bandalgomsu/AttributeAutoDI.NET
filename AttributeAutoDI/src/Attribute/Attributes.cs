@@ -1,21 +1,36 @@
 namespace AttributeAutoDI.Attribute;
 
 [AttributeUsage(AttributeTargets.Class)]
-public class SingletonAttribute(string? name = null) : System.Attribute
+public class SingletonAttribute : System.Attribute
 {
-    public string? Name { get; } = name;
+    public SingletonAttribute(string? name = null)
+    {
+        Name = name;
+    }
+
+    public string? Name { get; }
 }
 
 [AttributeUsage(AttributeTargets.Class)]
-public class ScopedAttribute(string? name = null) : System.Attribute
+public class ScopedAttribute : System.Attribute
 {
-    public string? Name { get; } = name;
+    public ScopedAttribute(string? name = null)
+    {
+        Name = name;
+    }
+
+    public string? Name { get; }
 }
 
 [AttributeUsage(AttributeTargets.Class)]
-public class TransientAttribute(string? name = null) : System.Attribute
+public class TransientAttribute : System.Attribute
 {
-    public string? Name { get; } = name;
+    public TransientAttribute(string? name = null)
+    {
+        Name = name;
+    }
+
+    public string? Name { get; }
 }
 
 [AttributeUsage(AttributeTargets.Class)]
@@ -24,15 +39,25 @@ public class PrimaryAttribute : System.Attribute
 }
 
 [AttributeUsage(AttributeTargets.Parameter)]
-public class NamedAttribute(string name) : System.Attribute
+public class NamedAttribute : System.Attribute
 {
-    public string Name { get; } = name;
+    public NamedAttribute(string name)
+    {
+        Name = name;
+    }
+
+    public string Name { get; }
 }
 
 [AttributeUsage(AttributeTargets.Class)]
-public class OptionsAttribute(string section) : System.Attribute
+public class OptionsAttribute : System.Attribute
 {
-    public string Section { get; } = section;
+    public OptionsAttribute(string section)
+    {
+        Section = section;
+    }
+
+    public string Section { get; }
 }
 
 // //todo
