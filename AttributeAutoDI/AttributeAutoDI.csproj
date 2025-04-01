@@ -2,24 +2,8 @@
 
     <PropertyGroup>
         <TargetFramework>net9.0</TargetFramework>
+        <OutputType>Library</OutputType>
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
-
-    <ItemGroup>
-        <_ContentIncludedByDefault Remove="Views\Home\Index.cshtml"/>
-        <_ContentIncludedByDefault Remove="Views\Home\Privacy.cshtml"/>
-        <_ContentIncludedByDefault Remove="Views\Shared\Error.cshtml"/>
-        <_ContentIncludedByDefault Remove="Views\Shared\_Layout.cshtml"/>
-        <_ContentIncludedByDefault Remove="Views\Shared\_ValidationScriptsPartial.cshtml"/>
-        <_ContentIncludedByDefault Remove="Views\_ViewImports.cshtml"/>
-        <_ContentIncludedByDefault Remove="Views\_ViewStart.cshtml"/>
-    </ItemGroup>
-
-    <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="9.0.3"/>
-        <PackageReference Include="Moq" Version="4.20.72"/>
-        <PackageReference Include="xunit" Version="2.9.3"/>
-    </ItemGroup>
-
 </Project>

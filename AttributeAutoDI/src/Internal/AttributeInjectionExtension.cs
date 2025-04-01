@@ -16,12 +16,12 @@ public static class AttributeInjectionExtension
         Assembly? assembly = null
     )
     {
-        assembly ??= Assembly.GetEntryAssembly() ?? typeof(Program).Assembly;
+        assembly ??= Assembly.GetEntryAssembly();
 
-        services.UseOptionsBindingInjection(configuration, assembly);
-        services.UseAttributeInjection(assembly);
+        services.UseOptionsBindingInjection(configuration, assembly!);
+        services.UseAttributeInjection(assembly!);
         services.UsePrimaryInjection();
-        services.UseNameParameterInjection(assembly);
+        services.UseNameParameterInjection(assembly!);
         services.Replace(ServiceDescriptor.Transient<IControllerActivator, NamedControllerActivator>());
     }
 }
