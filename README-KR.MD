@@ -8,6 +8,9 @@
 
 > dotnet add package AttributeAutoDI --version 1.0.0
 ---
+## Sample
+[Sample](https://github.com/bandalgomsu/AttributeAutoDI.NET/tree/main/AttributeAutoDI.Sample)
+---
 ## 💡 구현 동기 
 
 ASP.NET Core의 기본 DI 컨테이너는 매우 간단하고 강력하지만,  

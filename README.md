@@ -1,14 +1,19 @@
-[README-KR](https://github.com/bandalgomsu/AttributeAutoDI.NET/blob/main/README-KR.MD)
-
 # AttributeAutoDI
 
 > 🌟 Attribute-based automatic dependency injection library for .NET
 
 ---
+## README-KR
+[README-KR](https://github.com/bandalgomsu/AttributeAutoDI.NET/blob/main/README-KR.MD)
+
 ## Nuget
 > [NUGET](https://www.nuget.org/packages/AttributeAutoDI/1.0.0#readme-body-tab)
 
 > dotnet add package AttributeAutoDI --version 1.0.0
+---
+## Sample
+[Sample](https://github.com/bandalgomsu/AttributeAutoDI.NET/tree/main/AttributeAutoDI.Sample)
+
 ---
 ## 💡 Motivation
 The default DI container in ASP.NET Core is simple and powerful,
