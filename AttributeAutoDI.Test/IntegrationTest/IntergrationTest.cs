@@ -59,7 +59,7 @@ public class IntegrationTest
 public static class PreConfiguration
 {
     [Execute]
-    public static void TestConfig(IServiceCollection service)
+    public static void TestConfig(this IServiceCollection service)
     {
         IntegrationTest.Logs.Add("PRE_CONFIG");
         service.AddControllers();
