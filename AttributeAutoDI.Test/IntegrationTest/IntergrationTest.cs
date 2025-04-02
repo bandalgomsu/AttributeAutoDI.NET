@@ -12,8 +12,10 @@ namespace Test.IntegrationTest;
 [Collection("AttributeAutoDI.Test")]
 public class IntegrationTest
 {
+    public static List<string> Logs = new();
+
     [Fact]
-    public async Task Should_Use_Named_Implementation_In_Controller()
+    public async Task Integration_Test()
     {
         // Arrange: 직접 앱 호스팅
         using var host = await new HostBuilder()
@@ -24,7 +26,7 @@ public class IntegrationTest
                     .ConfigureServices((context, services) =>
                     {
                         var configuration = context.Configuration;
-                        services.AddControllers();
+
                         services.AddAttributeDependencyInjection(configuration, typeof(IntegrationTest).Assembly);
                     })
                     .Configure(app =>
@@ -38,11 +40,39 @@ public class IntegrationTest
         var client = host.GetTestClient();
 
         // Act
-        var response = await client.GetAsync("/notify");
-        var body = await response.Content.ReadAsStringAsync();
+        var namedResponse = await client.GetAsync("/named");
+        var namedBody = await namedResponse.Content.ReadAsStringAsync();
+
+        var primaryResponse = await client.GetAsync("/primary");
+        var primaryBody = await primaryResponse.Content.ReadAsStringAsync();
 
         // Assert
-        Assert.Equal("Email Sent!", body);
+        Assert.Equal("Email Sent!", namedBody);
+        Assert.Equal("SMS Sent!", primaryBody);
+
+        Assert.Equal("PRE_CONFIG", Logs[0]);
+        Assert.Equal("POST_CONFIG", Logs[1]);
+    }
+}
+
+[PreConfiguration]
+public static class PreConfiguration
+{
+    [Execute]
+    public static void TestConfig(IServiceCollection service)
+    {
+        IntegrationTest.Logs.Add("PRE_CONFIG");
+        service.AddControllers();
+    }
+}
+
+[PostConfiguration]
+public static class PostConfiguration
+{
+    [Execute]
+    public static void TestConfig(IServiceCollection service)
+    {
+        IntegrationTest.Logs.Add("POST_CONFIG");
     }
 }
 
@@ -70,11 +100,20 @@ public class SmsNotificationService : INotificationService
     }
 }
 
-public class NotifyController([Named("email")] INotificationService service) : ControllerBase
+public class NotifyController(
+    [Named("email")] INotificationService namedNotificationService,
+    INotificationService primarySmsNotificationService
+) : ControllerBase
 {
-    [HttpGet("/notify")]
-    public string Notify()
+    [HttpGet("/named")]
+    public string Named()
     {
-        return service.Notify();
+        return namedNotificationService.Notify();
+    }
+
+    [HttpGet("/primary")]
+    public string Primary()
+    {
+        return primarySmsNotificationService.Notify();
     }
 }
