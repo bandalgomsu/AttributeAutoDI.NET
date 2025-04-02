@@ -19,7 +19,7 @@ public static class AttributeInjectionExtension
     {
         assembly ??= Assembly.GetEntryAssembly();
 
-        services.UsePreConfiguration(assembly!);
+        services.UsePreConfiguration(configuration, assembly!);
 
         services.UseOptionsBindingInjection(configuration, assembly!);
         services.UseAttributeInjection(assembly!);
@@ -27,6 +27,6 @@ public static class AttributeInjectionExtension
         services.UseNameParameterInjection(assembly!);
         services.Replace(ServiceDescriptor.Transient<IControllerActivator, NamedControllerActivator>());
 
-        services.UsePostConfiguration(assembly!);
+        services.UsePostConfiguration(configuration, assembly!);
     }
 }
