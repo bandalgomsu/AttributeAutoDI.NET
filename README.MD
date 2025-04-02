@@ -51,6 +51,8 @@ so you can trust the system to "just work."
 
 🛠️ [Options("Section")] for automatic configuration binding
 
+👾 Executes configuration methods marked with [Execute] inside classes decorated with [PreConfiguration] or [PostConfiguration].
+
 ---
 
 ## 🚀 Usage
@@ -76,13 +78,31 @@ public static class AttributeInjectionExtension
 {
     assembly ??= Assembly.GetEntryAssembly();
 
-    services.UseOptionsBindingInjection(configuration, assembly);
-    services.UseAttributeInjection(assembly);
+    services.UsePreConfiguration(assembly!);
+
+    services.UseOptionsBindingInjection(configuration, assembly!);
+    services.UseAttributeInjection(assembly!);
     services.UsePrimaryInjection();
-    services.UseNameParameterInjection(assembly);
+    services.UseNameParameterInjection(assembly!);
     services.Replace(ServiceDescriptor.Transient<IControllerActivator, NamedControllerActivator>());
+
+    services.UsePostConfiguration(assembly!);
 }
 ```
+
+### Execution Flow
+1. Execute methods under [PreConfiguration] classes
+
+2. Register [Options] bindings
+
+3. Register class dependencies marked with [Singleton], [Transient], or [Scoped]
+
+4. Register [Primary] dependencies
+
+5. Register constructor parameter classes and controller activators with [Named]
+
+6. Execute methods under [PostConfiguration] classes
+
 ### ⚠️ Important: Register in correct order!
 ✔️ This works as expected:
 ```jsx
@@ -178,6 +198,42 @@ Then you can inject it with:
 public class SampleController(
     IOptions<SampleOption> sampleOption) ...
 ```
+
+### 6. Configuration Execution - [PreConfiguration], [PostConfiguration], [Execute]
+You can run setup methods before or after AddAttributeDependencyInjection using [Execute] methods.
+
+The execution order is:
+
+PreConfiguration → AddAttributeDependencyInjection → PostConfiguration
+
+
+```jsx
+[PreConfiguration] //or [PostConfiguration]
+public static class Configuration{
+    [Execute]
+    public static void TestConfig1(IServiceCollection service){
+        ...
+    }
+
+    [Execute]
+    public static void TestConfig2(this IServiceCollection service){
+    ...
+    }
+    
+    [Execute]
+    public static void TestConfig3(IServiceCollection service, IConfiguration configuration){
+        ...
+    }
+
+    [Execute]
+    public static void TestConfig4(this IServiceCollection service, IConfiguration configuration){
+    ...
+    }
+}
+```
+✅ Only these four method signatures are supported.
+
+ℹ️ Return types are ignored — any return type is allowed but not used.
 
 ---
 
