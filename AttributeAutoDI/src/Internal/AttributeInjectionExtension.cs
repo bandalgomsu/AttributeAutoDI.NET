@@ -1,5 +1,6 @@
 using System.Reflection;
 using AttributeAutoDI.Internal.AttributeInjection;
+using AttributeAutoDI.Internal.Configuration;
 using AttributeAutoDI.Internal.NameInjection;
 using AttributeAutoDI.Internal.OptionsBindingInjection;
 using AttributeAutoDI.Internal.PrimaryInjection;
@@ -18,10 +19,14 @@ public static class AttributeInjectionExtension
     {
         assembly ??= Assembly.GetEntryAssembly();
 
+        services.UsePreConfiguration(assembly!);
+
         services.UseOptionsBindingInjection(configuration, assembly!);
         services.UseAttributeInjection(assembly!);
         services.UsePrimaryInjection();
         services.UseNameParameterInjection(assembly!);
         services.Replace(ServiceDescriptor.Transient<IControllerActivator, NamedControllerActivator>());
+
+        services.UsePostConfiguration(assembly!);
     }
 }

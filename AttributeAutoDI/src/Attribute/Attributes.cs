@@ -60,6 +60,21 @@ public class OptionsAttribute : System.Attribute
     public string Section { get; }
 }
 
+[AttributeUsage(AttributeTargets.Class)]
+public class PostConfigurationAttribute : System.Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Class)]
+public class PreConfigurationAttribute : System.Attribute
+{
+}
+
+[AttributeUsage(AttributeTargets.Method)]
+public class ExecuteAttribute : System.Attribute
+{
+}
+
 // //todo
 // [AttributeUsage(AttributeTargets.Method)]
 // public class ProfileAttribute(string env) : System.Attribute
