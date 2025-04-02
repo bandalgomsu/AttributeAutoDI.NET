@@ -44,6 +44,7 @@ ASP.NET Core의 기본 DI 컨테이너는 매우 간단하고 강력하지만,
 - ⭐ `[Primary]` 지정 시 다중 구현체 중 기본값 자동 지정
 - 🏷️ `[Named]` 지정 후 파라미터에 `[Named("...")]`로 명시적 주입
 - 🛠️ `[Options()]` 지정 시 IOptions 자동 바인딩 ! 
+- 👾 `[PreConfiguration]` , `[PostConfiguration]` 클래스 하위의 , `[Execute]` 메서드를 통해서 설정 메서드 실행 
 ---
 
 ## 🚀 사용 방법
@@ -69,14 +70,27 @@ public static class AttributeInjectionExtension
 {
     assembly ??= Assembly.GetEntryAssembly();
 
-    services.UseOptionsBindingInjection(configuration, assembly);
-    services.UseAttributeInjection(assembly);
+    services.UsePreConfiguration(assembly!);
+
+    services.UseOptionsBindingInjection(configuration, assembly!);
+    services.UseAttributeInjection(assembly!);
     services.UsePrimaryInjection();
-    services.UseNameParameterInjection(assembly);
+    services.UseNameParameterInjection(assembly!);
     services.Replace(ServiceDescriptor.Transient<IControllerActivator, NamedControllerActivator>());
-}
+
+    services.UsePostConfiguration(assembly!);
 }
 ```
+
+### 실행 흐름 
+1. PreConfiguration 하위 Execute 메서드 실행 
+2. Options 등록 
+3. [Singleton] , [Transient] , [Scoped] 클래스 의존성 등록 
+4. [Primary] 의존성 등록 
+5. [Named]가 붙은 파라미터 클래스 및 Controller Activator 등록 
+6. PostConfiguration 하위 Execute 메서드 실행 
+
+
 ### 주의 
 ```jsx
 builder.Service.AddSingleton...
@@ -174,6 +188,38 @@ builder.Services.Configure<SampleOption>(configuration.GetSection("Sample:Sample
 public class SampleController(
     IOptions<SampleOption> sampleOption) ...
 ```
+
+### 6. Configuration 기능 - [PreConfiguration] , [PostConfiguration] , [Execute]
+AddAttributeDependencyInjection 전 후로 [Execute]가 붙은 메서드를 실행할 수 있는 기능입니다.
+
+PreConfiguration -> AddAttributeDependencyInjection -> PostConfiguration 순으로 실행
+
+```jsx
+[PreConfiguration] //or [PostConfiguration]
+public static class Configuration{
+    [Execute]
+    public static void TestConfig1(IServiceCollection service){
+        ...
+    }
+
+    [Execute]
+    public static void TestConfig2(this IServiceCollection service){
+    ...
+    }
+    
+    [Execute]
+    public static void TestConfig3(IServiceCollection service, IConfiguration configuration){
+        ...
+    }
+
+    [Execute]
+    public static void TestConfig4(this IServiceCollection service, IConfiguration configuration){
+    ...
+    }
+}
+```
+
+위에 4개의 메서드 시그니처만 작동합니다 (리턴 타입은 상관 X)
 
 ---
 
