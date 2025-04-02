@@ -4,9 +4,9 @@
 
 ---
 ## Nuget
-> [NUGET](https://www.nuget.org/packages/AttributeAutoDI/1.0.0#readme-body-tab)
+> [NUGET](https://www.nuget.org/packages/AttributeAutoDI)
 
-> dotnet add package AttributeAutoDI --version 1.0.0
+> dotnet add package AttributeAutoDI --version 1.0.1
 ---
 ## Sample
 [Sample](https://github.com/bandalgomsu/AttributeAutoDI.NET/tree/main/AttributeAutoDI.Sample)
