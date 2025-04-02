@@ -6,8 +6,9 @@
 
 ---
 ## Nuget
->
+> [NUGET](https://www.nuget.org/packages/AttributeAutoDI/1.0.0#readme-body-tab)
 
+> dotnet add package AttributeAutoDI --version 1.0.0
 ---
 ## 💡 Motivation
 The default DI container in ASP.NET Core is simple and powerful,
