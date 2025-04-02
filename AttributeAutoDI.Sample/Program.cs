@@ -4,8 +4,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 var configuration = builder.Configuration;
 
-builder.Services.AddControllers();
-builder.Services.AddControllersWithViews();
 builder.Services.AddAttributeDependencyInjection(configuration);
 
 var app = builder.Build();
